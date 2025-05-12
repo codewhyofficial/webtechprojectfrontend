@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 function Navbar() {
-  const isAuthenticated = localStorage.getItem('jwt_token');
+  const token = localStorage.getItem('jwt_token');
+  const isAuthenticated = !!token;
 
   const handleLogout = () => {
     localStorage.removeItem('jwt_token');
@@ -10,38 +12,59 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-blue-500 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-white text-2xl font-bold">
-          WebTechProject
-        </Link>
-        <div className="space-x-4">
+    <motion.nav
+      initial={{ y: -50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 80 }}
+      className="bg-white shadow-md"
+    >
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <motion.div whileHover={{ scale: 1.05 }}>
+          <Link
+            to="/"
+            className="text-gray-900 text-2xl font-semibold tracking-tight"
+          >
+            UITS
+          </Link>
+        </motion.div>
+
+        <div className="space-x-6 flex items-center">
           {isAuthenticated ? (
             <>
-              <Link to="/profile" className="text-white">
-                Profile
-              </Link>
-              <button
+              <AnimatedNavLink to="/profile">Profile</AnimatedNavLink>
+              <AnimatedNavLink to="/add-device">Add Device</AnimatedNavLink>
+              <AnimatedNavLink to="/assign-ownership">Assign Ownership</AnimatedNavLink>
+              <AnimatedNavLink to="/view-devices">View Devices</AnimatedNavLink>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
                 onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 font-medium"
               >
                 Logout
-              </button>
+              </motion.button>
             </>
           ) : (
             <>
-              <Link to="/login" className="text-white">
-                Login
-              </Link>
-              <Link to="/register" className="text-white">
-                Sign Up
-              </Link>
+              <AnimatedNavLink to="/login">Login</AnimatedNavLink>
+              <AnimatedNavLink to="/register">Sign Up</AnimatedNavLink>
             </>
           )}
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
+
+// Reusable animated nav link
+const AnimatedNavLink = ({ to, children }) => (
+  <motion.div whileHover={{ scale: 1.05 }} className="inline-block">
+    <Link
+      to={to}
+      className="text-gray-700 hover:text-black transition-colors duration-200 font-medium"
+    >
+      {children}
+    </Link>
+  </motion.div>
+);
 
 export default Navbar;

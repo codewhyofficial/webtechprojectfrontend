@@ -6,7 +6,7 @@ function Home() {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
       <div className="flex justify-center items-center min-h-screen">
-        <h1 className="text-3xl font-bold text-center">Welcome to the Application</h1>
+        <h1 className="text-3xl font-bold text-center">Welcome to the Application UITS</h1>
       </div>
     </div>
   );
