@@ -129,6 +129,8 @@ export default function AddDevice() {
       { headers: { Authorization: token } }
     );
 
+    console.log("template response is ", tmplRes.data);
+
 
 
     console.log(tmplRes.data);
@@ -166,7 +168,7 @@ export default function AddDevice() {
       { headers: { Authorization: token } }
     );
 
-    console.log(res.data);
+    console.log("while adding the template " , res.data);
 
     const newTmp = { template_id: res.data.spec_template_id, name: newTemplateName };
     setSpecTemplates((prev) => [...prev, newTmp]);
@@ -184,7 +186,7 @@ export default function AddDevice() {
       { headers: { Authorization: token } }
     );
 
-    console.log(res.data);
+    console.log("while adding the value " , res.data);
     setSpecValuesByTemplate((prev) => ({
       ...prev,
       [template_id]: [
@@ -200,6 +202,7 @@ export default function AddDevice() {
       `http://localhost:8080/api/specifications/templates/${selectedType}`,
       { headers: { Authorization: token } }
     );
+    
 
 
 
@@ -231,16 +234,21 @@ export default function AddDevice() {
 
   // Choose spec value
   const handleSpecChange = (template_id, value) => {
+    console.log("the spec here is ", template_id, value);
     setChosenValues((prev) => ({ ...prev, [template_id]: value }));
+    console.log("chosen values are ", chosenValues);
   };
 
   // Submit all specs
   const handleSubmitSpecs = async () => {
-    const payload = specTemplates.map((tmp) => ({
-      device_id: deviceId,
-      spec_template_id: tmp.template_id,
-      spec_master_id: parseInt(chosenValues[tmp.template_id]),
-    }));
+const payload = specTemplates
+  .filter(tmp => chosenValues[tmp.template_id]) // ensure value is selected
+  .map((tmp) => ({
+    device_id: deviceId,
+    spec_template_id: tmp.template_id,
+    spec_master_id: parseInt(chosenValues[tmp.template_id]),
+  }));
+
     console.log("Specifications submitted:", payload);
     await axios.post("http://localhost:8080/api/specifications/add", payload, {
       headers: { Authorization: token },
@@ -415,7 +423,8 @@ return (
                   >
                     <option value="">Select value</option>
                     {(specValuesByTemplate[tmp.template_id] || []).map((v) => (
-                      <option key={v.id} value={v.value}>{v.value}</option>
+                      console.log("Mapping value:", v, v.id),
+                      <option key={v.id} value={v.id}>{v.value}</option> // yaha par v.id pass honi chahiye otherwise the string will be passed. 
                     ))}
                   </select>
                   <input

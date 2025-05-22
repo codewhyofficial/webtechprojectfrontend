@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import SHA256 from "crypto-js/sha256";
+
 
 export default function Login() {
   const navigate = useNavigate();
@@ -8,15 +10,19 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    const h1 = SHA256(password).toString();
 
     try {
       const res = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password: h1 }),
       });
 
       if (!res.ok) {

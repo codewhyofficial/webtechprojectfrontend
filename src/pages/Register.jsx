@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import SHA256 from "crypto-js/sha256";
+
 
 export default function Register() {
   const navigate = useNavigate();
@@ -18,13 +20,15 @@ export default function Register() {
     e.preventDefault();
     setError("");
 
+    const h1 = SHA256(password).toString(); 
+
     try {
       const res = await fetch("http://localhost:8080/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          password,
+          password:h1,
           role,
           full_name: fullName,
           designation,
